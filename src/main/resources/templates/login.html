@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Вход</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px auto;
+      max-width: none;
+      width: 1240px; /* ← Установи фиксированную ширину */
+      padding: 20px;
+      color: #333;
+    }
+    .login-container {
+      display: flex;
+      min-height: 100vh;
+      min-width: 1200px;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .login-preview {
+      overflow: hidden;
+    }
+
+    .login-preview img {
+      width: 107%;
+      height: 81%;
+      object-fit: contain; /* Показывает всю картинку без обрезания */
+    }
+
+    .login-form {
+      flex: 0 0 450px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background-color: #f9f9f9;
+      max-width: 450px; /* ← Ограничиваем ширину */
+      width: 100%;       /* ← Занимаем всю ширину контейнера */
+      margin: 0 auto;    /* ← Центрируем по горизонтали */
+    }
+
+    .form-box {
+      width: 100%;
+      max-width: 400px;
+      padding: 30px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: white;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .success-message {
+      color: green;
+      text-align: center;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .error-message {
+      color: #d9534f;
+      text-align: center;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-container">
+  <!-- Левая часть — картинка -->
+  <div class="login-preview">
+    <img src="/images/login-preview.png" alt="Логин" />
+  </div>
+
+  <!-- Правая часть — форма -->
+  <div class="login-form">
+    <div class="form-box">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h1 style="
+        margin: 0;
+        color: #007bff;
+        font-size: 27px;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">
+          NoMoreProcrastination.app
+        </h1>
+        <p style="color: #666; font-size: 14px; margin-top: 8px;">
+          Управляй своими задачами легко
+        </p>
+      </div>
+      <!-- Сообщение об успешной регистрации -->
+      <div th:if="${param.registered}" class="success-message">
+        Регистрация прошла успешно! Войдите, используя свои данные.
+      </div>
+
+      <!-- Ошибка входа -->
+      <div th:if="${param.error}" class="error-message">
+        Неверный логин или пароль
+      </div>
+
+      <!-- Форма входа -->
+      <form th:action="@{/login}" method="post">
+        <h2 style="margin-top: 0; color: #333;">Войти</h2>
+
+        <div class="form-group">
+          <label for="username">Логин</label>
+          <input type="text" id="username" name="username" required />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Пароль</label>
+          <input type="password" id="password" name="password" required />
+        </div>
+
+        <!-- CSRF Token -->
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <button type="submit">Войти</button>
+      </form>
+      <div style="text-align: center; margin-top: 15px; font-size: 14px;">
+        Нет аккаунта? <a href="/register" style="color: #007bff; text-decoration: none;">Зарегистрироваться</a>
+      </div>
+
+      <!-- Кнопка входа в демо-аккаунт -->
+      <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px dashed #ccc;">
+        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">или</p>
+        <form th:action="@{/login}" method="post" style="display: inline;">
+          <!-- Скрытые поля -->
+          <input type="hidden" name="username" value="testuser" />
+          <input type="hidden" name="password" value="1234" />
+          <!-- CSRF Token (обязательно!) -->
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+          <button type="submit"
+                  style="
+                    padding: 10px 20px;
+                    background: #f0ad4e;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    font-size: 15px;
+                    cursor: pointer;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            Войти в демо аккаунт
+          </button>
+        </form>
+        <p style="color: #999; font-size: 12px; margin-top: 8px;">
+          (для демонстрации функционала)
+        </p>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+
+</body>
+</html>
