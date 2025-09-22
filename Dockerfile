@@ -1,11 +1,11 @@
-FROM maven:3.9.6-jdk-21 AS builder
+FROM maven:3.9.6-eclipse-temurin-21 AS builder
 
 COPY pom.xml .
 COPY src ./src
 
 RUN mvn clean package -DskipTests
 
-FROM openjdk:23-jdk
+FROM openjdk:21-jdk
 
 RUN apt-get update && apt-get install -y postgresql-client
 
