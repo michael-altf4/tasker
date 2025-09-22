@@ -1,4 +1,4 @@
-FROM maven:3.9-jdk-21 AS builder
+FROM maven:3.9.6-jdk-21 AS builder
 
 COPY pom.xml .
 COPY src ./src
