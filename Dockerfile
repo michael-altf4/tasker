@@ -1,5 +1,7 @@
 FROM eclipse-temurin:21-jdk AS builder
 
+RUN apt-get update && apt-get install -y unzip curl && rm -rf /var/lib/apt/lists/*
+
 ENV GRADLE_VERSION=8.11
 
 RUN mkdir /gradle && \
