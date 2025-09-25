@@ -14,6 +14,9 @@ ENV PATH="/gradle/gradle-${GRADLE_VERSION}/bin:${PATH}"
 
 COPY build.gradle settings.gradle ./
 COPY gradlew gradle ./
+
+RUN chmod +x ./gradlew
+
 COPY src ./src
 
 RUN ./gradlew build -x test
