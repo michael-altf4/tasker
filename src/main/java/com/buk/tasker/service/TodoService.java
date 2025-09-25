@@ -26,6 +26,7 @@ public class TodoService {
     private User getCurrentUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails) principal).getUsername();
+        System.out.println("Текущий пользователь: " + username);
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
     }
