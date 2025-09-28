@@ -124,14 +124,20 @@
   </style>
 </head>
 <script>
-  // Извлекаем ID задачи из URL: /todo/5 → 5
   const currentTodoId = window.location.pathname.split('/').pop();
 
-  // Базовый URL для API
-  const API_URL = 'https://tasker-tlu7.onrender.com/api/todos';
-  const COMMENTS_API_URL = 'https://tasker-tlu7.onrender.com/api/comments';
+  const getBaseUrl = () => {
+    const host = window.location.hostname;
+    if (host === 'localhost' || host === '127.0.0.1') {
+      return 'http://localhost:8080';
+    }
+    return 'https://tasker-tlu7.onrender.com';
+  };
 
-  // ========== Управление названием ==========
+  const BASE_API_URL = getBaseUrl();
+  const API_URL = `${BASE_API_URL}/api/todos`;
+  const COMMENTS_API_URL = `${BASE_API_URL}/api/comments`;
+
   function showTitleEdit() {
     document.getElementById('titleText').style.display = 'none';
     document.getElementById('titleEditForm').style.display = 'block';
@@ -142,7 +148,6 @@
     document.getElementById('titleText').style.display = 'block';
   }
 
-  // ========== Управление описанием ==========
   function showEditForm() {
     document.getElementById('editForm').style.display = 'block';
   }
@@ -151,7 +156,6 @@
     document.getElementById('editForm').style.display = 'none';
   }
 
-  // ========== Управление приоритетом ==========
   function showPriorityForm() {
     document.getElementById('priorityForm').style.display = 'flex';
     document.getElementById('priorityText').style.display = 'none';
@@ -164,7 +168,6 @@
     document.querySelector('.priority-container').style.alignItems = 'center';
   }
 
-  // ========== Комментарии ==========
   function loadComments() {
     if (!currentTodoId || isNaN(currentTodoId)) return;
 
@@ -181,7 +184,6 @@
                 const div = document.createElement('div');
                 div.className = 'comment-container';
 
-                // Шапка: дата + кнопки
                 const headerDiv = document.createElement('div');
                 headerDiv.className = 'comment-header';
 
@@ -211,13 +213,11 @@
                 headerDiv.appendChild(dateSpan);
                 headerDiv.appendChild(controlsDiv);
 
-                // Текст комментария
                 const textDiv = document.createElement('div');
                 textDiv.className = 'comment-text';
                 textDiv.id = `comment-text-${comment.id}`;
                 textDiv.innerHTML = escapeHtml(comment.text).replace(/\n/g, '<br>');
 
-                // Собираем элемент
                 div.appendChild(headerDiv);
                 div.appendChild(textDiv);
                 container.appendChild(div);
@@ -245,7 +245,7 @@
             })
             .then(newComment => {
               textInput.value = '';
-              loadComments(); // Перезагружаем
+              loadComments();
             })
             .catch(err => {
               console.error('Ошибка добавления комментария:', err);
@@ -331,7 +331,6 @@
             });
   }
 
-  // ========== Вспомогательные функции ==========
   function formatDateTime(isoString) {
     const date = new Date(isoString);
     return new Intl.DateTimeFormat('ru-RU', {
@@ -349,7 +348,6 @@
     return div.innerHTML;
   }
 
-  // ========== Загрузка при старте ==========
   if (currentTodoId && !isNaN(currentTodoId)) {
     loadComments();
   } else {
@@ -360,13 +358,11 @@
 <div class="detail-container">
   <a href="/" class="back-link">← Назад к списку</a>
 
-  <!-- Заголовок с кнопкой редактирования -->
   <div class="detail-header">
     <h1 class="detail-title" id="titleText" th:text="${todo.title}"></h1>
     <button class="edit-btn" onclick="showTitleEdit()">✏️</button>
   </div>
 
-  <!-- Форма редактирования названия (скрыта) -->
   <div id="titleEditForm" style="display: none; margin-bottom: 20px;">
     <form th:action="@{/todo/{id}/update-title(id=${todo.id})}" method="post">
       <input type="text" name="title" th:value="${todo.title}" style="width: 100%; padding: 8px; font-size: 16px;" required />
@@ -379,20 +375,16 @@
     Создана: <span th:text="${#temporals.format(todo.createdAt, 'dd.MM.yyyy в HH:mm')}"></span>
   </p>
 
-  <!-- Приоритет -->
   <div class="priority-container" style="display: flex; align-items: center; gap: 10px; margin: 15px 0;" id="priorityContainer">
     <span class="priority-label">Приоритет:</span>
 
-    <!-- Отображение приоритета текстом -->
     <span id="priorityText" style="font-weight: normal;">
 <span th:text="${todo.priorityLabel}"></span>
     </span>
 
-    <!-- Карандашик для редактирования -->
     <button class="edit-btn" onclick="showPriorityForm()" style="flex-shrink: 0;">✏️</button>
   </div>
 
-  <!-- Форма редактирования приоритета (скрыта) -->
   <div id="priorityForm" style="display: none; margin: 15px 0;">
     <form th:action="@{/todo/{id}/update-priority(id=${todo.id})}" method="post" style="display: flex; align-items: center; gap: 8px;">
       <select name="priority" class="priority-select">
@@ -405,9 +397,7 @@
     </form>
   </div>
 
-  <!-- Описание -->
   <div class="detail-description">
-    <!-- Если описание пустое -->
     <div th:if="${todo.description == null or todo.description == ''}">
       <form th:action="@{/todo/{id}/update-description(id=${todo.id})}" method="post">
             <textarea name="description" rows="5" style="width: 100%; border: 1px solid #ccc; padding: 8px;"
@@ -423,7 +413,6 @@
       <button class="edit-btn" onclick="showEditForm()">✏️</button>
     </div>
 
-    <!-- Форма редактирования (скрыта) -->
     <div id="editForm" style="display: none; margin-top: 15px;">
       <form th:action="@{/todo/{id}/update-description(id=${todo.id})}" method="post">
             <textarea name="description" rows="5" style="width: 100%; border: 1px solid #ccc; padding: 8px;"
@@ -434,24 +423,20 @@
     </div>
   </div>
 
-  <!-- Кнопка закрытия -->
   <form th:action="@{/todo/{id}/close(id=${todo.id})}" method="post">
     <button type="submit" class="btn-close" th:unless="${todo.completed}">Закрыть задачу</button>
   </form>
   <p th:if="${todo.completed}" style="color: #28a745; font-weight: bold; margin-top: 10px;">✅ Эта задача закрыта</p>
 </div>
-<!-- Комментарии -->
 <div style="margin: 30px 0; padding: 15px; border: 1px solid #eee; border-radius: 8px; background: #f9f9f9;">
   <h3>Комментарии</h3>
 
-  <!-- Форма добавления -->
   <div style="margin-bottom: 15px;">
         <textarea id="newCommentText" rows="3" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
                   placeholder="Напишите комментарий..."></textarea>
     <button onclick="addComment()" style="margin-top: 8px; padding: 6px 12px;">Добавить</button>
   </div>
 
-  <!-- Контейнер для комментариев -->
   <div id="commentsContainer"></div>
 </div>
 </body>

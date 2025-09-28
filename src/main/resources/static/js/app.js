@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const API_URL = 'https://tasker-tlu7.onrender.com/api/todos';
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const API_URL = isLocalhost
+        ? 'http://localhost:8080/api/todos'
+        : 'https://tasker-tlu7.onrender.com/api/todos';
     let currentTodos = [];
 
     function loadTodos() {
