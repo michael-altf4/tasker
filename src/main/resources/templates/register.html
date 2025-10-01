@@ -9,7 +9,7 @@
             font-family: Arial, sans-serif;
             margin: 40px auto;
             max-width: none;
-            width: 1240px; /* ← Установи фиксированную ширину */
+            width: 1240px;
             padding: 20px;
             color: #333;
         }
@@ -29,7 +29,7 @@
         .login-preview img {
             width: 107%;
             height: 81%;
-            object-fit: contain; /* Показывает всю картинку без обрезания */
+            object-fit: contain;
         }
 
         .login-form {
@@ -39,9 +39,9 @@
             justify-content: center;
             padding: 20px;
             background-color: #f9f9f9;
-            max-width: 450px; /* ← Ограничиваем ширину */
-            width: 100%;       /* ← Занимаем всю ширину контейнера */
-            margin: 0 auto;    /* ← Центрируем по горизонтали */
+            max-width: 450px;
+            width: 100%;
+            margin: 0 auto;
         }
 
         .form-box {
@@ -119,12 +119,10 @@
 <body>
 
 <div class="login-container">
-    <!-- Левая часть — та же картинка -->
     <div class="login-preview">
         <img src="/images/login-preview.png" alt="Регистрация" />
     </div>
 
-    <!-- Правая часть — форма регистрации -->
     <div class="login-form">
         <div class="form-box">
             <div style="text-align: center; margin-bottom: 20px;">
@@ -141,11 +139,9 @@
                     Управляй своими задачами легко
                 </p>
             </div>
-            <!-- Сообщение об ошибке -->
             <div th:if="${error}" class="error-message" th:text="${error}">
             </div>
 
-            <!-- Форма регистрации -->
             <form action="/register" method="post">
                 <!-- CSRF Token -->
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
