@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(API_URL)
             .then(response => response.json())
             .then(todos => {
-                console.log('Загруженные задачи:', todos); // ← Добавлено
+                console.log('Загруженные задачи:', todos);
                 currentTodos = [...todos];
                 currentTodos.sort((a, b) => a.completed - b.completed);
                 renderTodoList();
@@ -96,9 +96,8 @@ document.addEventListener('DOMContentLoaded', function () {
         })
             .then(response => response.json())
             .then(newTodo => {
-                console.log('Новая задача:', newTodo); // ← Проверь, есть ли id
+                console.log('Новая задача:', newTodo);
 
-                // Убедись, что newTodo.id существует
                 if (!newTodo.id) {
                     console.error('Задача не имеет ID!', newTodo);
                     alert('Ошибка: задача не была создана');
@@ -120,16 +119,16 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(`${API_URL}/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ completed }) // ← Только статус!
+            body: JSON.stringify({ completed })
         })
             .then(response => response.json())
             .then(updatedTodo => {
                 const index = currentTodos.findIndex(t => t.id === id);
                 if (index !== -1) {
-                    // Сохраняем актуальные данные: title, description, priority
+
                     currentTodos[index] = updatedTodo;
                 }
-                // Пересортируем: активные сверху
+
                 currentTodos.sort((a, b) => a.completed - b.completed);
                 renderTodoList();
             })
@@ -162,9 +161,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Инициализация
+
     loadTodos();
 
-    // Экспортируем функции в глобальную область, чтобы кнопки могли их вызывать
+
     window.addTodo = addTodo;
 });
