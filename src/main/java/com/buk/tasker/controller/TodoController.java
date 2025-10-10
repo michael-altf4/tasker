@@ -25,13 +25,15 @@ public class TodoController {
     public ResponseEntity<TodoItem> getTodoById(@PathVariable Long id) {
         return service.getTodoById(id)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseGet(() -> {
+
+                    System.out.println("Задача с ID " + id + " не найдена");
+                    return ResponseEntity.notFound().build();
+                });
     }
     @PostMapping
     public TodoItem createTodo(@RequestBody TodoItem todo) {
-        System.out.println("Создаём задачу: " + todo.getTitle());
         TodoItem saved = service.createTodo(todo);
-        System.out.println("Сохранено с ID: " + saved.getId());
         return saved;
     }
 

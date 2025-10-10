@@ -1,5 +1,3 @@
-// src/main/java/com/buk/tasker/controller/TodoDetailController.java
-
 package com.buk.tasker.controller;
 
 import com.buk.tasker.model.Priority;
@@ -33,7 +31,7 @@ public class TodoDetailController {
             todo.setCompleted(true);
             repository.save(todo);
         });
-        return "redirect:/todo/" + id; // ← перезагружаем страницу
+        return "redirect:/todo/" + id;
     }
 
     @PostMapping("/todo/{id}/update-description")
@@ -47,7 +45,6 @@ public class TodoDetailController {
 
     @PostMapping("/todo/{id}/update-priority")
     public String updatePriority(@PathVariable Long id, @RequestParam Priority priority) {
-        System.out.println("Обновляем приоритет для задачи " + id + " → " + priority); // ← смотри в консоль
         repository.findById(id).ifPresent(todo -> {
             todo.setPriority(priority);
             repository.save(todo);

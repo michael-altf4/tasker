@@ -1,6 +1,7 @@
 
 package com.buk.tasker.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -14,6 +15,7 @@ public class Comment {
     private String text;
     private LocalDateTime createdAt;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "todo_item_id")
     private TodoItem todoItem;
@@ -22,8 +24,9 @@ public class Comment {
         this.createdAt = LocalDateTime.now();
     }
 
-    // Геттеры и сеттеры
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
     public void setId(Long id) { this.id = id; }
 
     public String getText() { return text; }

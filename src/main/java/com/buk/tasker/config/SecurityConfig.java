@@ -1,7 +1,5 @@
 package com.buk.tasker.config;
 
-// src/main/java/com/buk/tasker/config/SecurityConfig.java
-
 import com.buk.tasker.model.User;
 import com.buk.tasker.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +12,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -31,7 +31,7 @@ public class SecurityConfig {
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
                 User user = userRepository.findByUsername(username)
                         .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден: " + username));
-                return user; // потому что User implements UserDetails
+                return user;
             }
         };
     }
@@ -42,9 +42,11 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/register", "/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/api/**").permitAll() // ← или authenticated(), но без CSRF
+                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/api/**").authenticated()
                         .anyRequest().authenticated()
                 )
+                .httpBasic(withDefaults())
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/")
@@ -52,7 +54,7 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout.permitAll())
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/**") // ✅ Игнорировать CSRF для REST API
+                        .ignoringRequestMatchers("/api/**")
                 );
 
         return http.build();

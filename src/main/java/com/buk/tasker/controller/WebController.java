@@ -1,4 +1,3 @@
-// src/main/java/com/buk/tasker/controller/WebController.java
 package com.buk.tasker.controller;
 
 import org.springframework.stereotype.Controller;
@@ -9,6 +8,6 @@ public class WebController {
 
     @GetMapping("/")
     public String showTodoPage() {
-        return "todos"; // имя шаблона: todos.html
+        return "todos";
     }
 }

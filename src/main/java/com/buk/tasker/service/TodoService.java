@@ -1,5 +1,4 @@
 package com.buk.tasker.service;
-// src/main/java/com/buk/tasker/service/TodoService.java
 
 import com.buk.tasker.model.TodoItem;
 import com.buk.tasker.model.User;
@@ -16,40 +15,33 @@ import java.util.Optional;
 @Service
 public class TodoService {
 
-    @Autowired
-    private TodoRepository repository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final TodoRepository repository;
+    private final UserService userService;
 
-    // Получить текущего пользователя
-    private User getCurrentUser() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
-        System.out.println("Текущий пользователь: " + username);
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+    public TodoService(TodoRepository repository, UserService userService) {
+        this.repository = repository;
+        this.userService = userService;
     }
 
-    // Все задачи — только текущего пользователя
     public List<TodoItem> getAllTodos() {
-        User user = getCurrentUser();
+        User user = userService.getCurrentUser();
         return repository.findByUser(user);
     }
 
     public Optional<TodoItem> getTodoById(Long id) {
-        User user = getCurrentUser();
+        User user = userService.getCurrentUser();
         return repository.findByIdAndUser(id, user);
     }
 
     public TodoItem createTodo(TodoItem todo) {
-        User user = getCurrentUser();
+        User user = userService.getCurrentUser();
         todo.setUser(user);
         return repository.save(todo);
     }
 
     public TodoItem updateTodo(Long id, TodoItem updatedTodo) {
-        User user = getCurrentUser();
+        User user = userService.getCurrentUser();
         return repository.findByIdAndUser(id, user)
                 .map(existing -> {
                     if (updatedTodo.getTitle() != null) {
@@ -70,7 +62,7 @@ public class TodoService {
     }
 
     public void deleteTodo(Long id) {
-        User user = getCurrentUser();
+        User user = userService.getCurrentUser();
         if (!repository.existsByIdAndUser(id, user)) {
             throw new RuntimeException("Задача не найдена или доступ запрещён");
         }

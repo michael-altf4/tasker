@@ -1,6 +1,6 @@
 package com.buk.tasker.model;
-// src/main/java/com/buk/tasker/model/TodoItem.java
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,22 +15,20 @@ public class TodoItem {
     private Long id;
 
     private String title;
-    private String description; // новое поле
+    private String description;
     private boolean completed;
     @Enumerated(EnumType.STRING)
     private Priority priority;
 
-    private LocalDateTime createdAt; // новое поле
-
+    private LocalDateTime createdAt;
+    @JsonIgnore
     @OneToMany(mappedBy = "todoItem", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
-    // Связь: одна задача принадлежит одному пользователю
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    // Конструкторы
     public TodoItem() {
         this.createdAt = LocalDateTime.now();
         this.priority = Priority.MEDIUM;
@@ -44,26 +42,54 @@ public class TodoItem {
         this.priority = Priority.MEDIUM;
     }
 
-    // Геттеры и сеттеры
 
+    public User getUser() {
+        return user;
+    }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getTitle() {
+        return title;
+    }
 
-    public boolean isCompleted() { return completed; }
-    public void setCompleted(boolean completed) { this.completed = completed; }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 
     public Priority getPriority() {
         return priority;
@@ -73,7 +99,6 @@ public class TodoItem {
         if (priority != null) {
             this.priority = priority;
         }
-        // Если null — ничего не делаем
     }
 
     public String getPriorityLabel() {
@@ -86,5 +111,5 @@ public class TodoItem {
             case HIGH -> "Высокий";
         };
     }
-    }
+}
 

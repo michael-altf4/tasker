@@ -10,12 +10,9 @@ import java.util.Optional;
 
 @Repository
 public interface TodoRepository extends JpaRepository<TodoItem, Long> {
-    // Найти все задачи пользователя
     List<TodoItem> findByUser(User user);
 
-    // Найти задачу по ID и пользователю
     Optional<TodoItem> findByIdAndUser(Long id, User user);
 
-    // Проверить существование
     boolean existsByIdAndUser(Long id, User user);
 }

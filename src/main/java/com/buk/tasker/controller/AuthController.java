@@ -38,8 +38,6 @@ public class AuthController {
             @RequestParam String password,
             @RequestParam String confirmPassword,
             Model model) {
-
-        // 1. Проверь, что поля не пустые
         if (username == null || username.trim().isEmpty()) {
             model.addAttribute("error", "Логин обязателен");
             return "register";
@@ -49,29 +47,21 @@ public class AuthController {
             model.addAttribute("error", "Пароль обязателен");
             return "register";
         }
-
-        // 2. Проверь совпадение паролей
         if (!password.equals(confirmPassword)) {
             model.addAttribute("error", "Пароли не совпадают");
             model.addAttribute("username", username);
             return "register";
         }
-
-        // 3. Проверь, что логин уникален
         if (userRepository.findByUsername(username).isPresent()) {
             model.addAttribute("error", "Пользователь с таким логином уже существует");
             model.addAttribute("username", username);
             return "register";
         }
-
-        // 4. Создай и сохрани пользователя
         User user = new User();
         user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(password)); // 🔐 Хешируем!
+        user.setPassword(passwordEncoder.encode(password));
 
         userRepository.save(user);
-
-        // 5. Перенаправи на вход (можно сделать авто-вход)
         return "redirect:/login?registered=true";
     }
 }
