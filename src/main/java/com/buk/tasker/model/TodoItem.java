@@ -1,6 +1,7 @@
 package com.buk.tasker.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,7 +18,9 @@ public class TodoItem {
     private String title;
     private String description;
     private boolean completed;
+
     @Enumerated(EnumType.STRING)
+    @Schema(description = "Task priority: LOW, MEDIUM, HIGH")
     private Priority priority;
 
     private LocalDateTime createdAt;
@@ -27,6 +30,7 @@ public class TodoItem {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     public TodoItem() {
@@ -102,13 +106,11 @@ public class TodoItem {
     }
 
     public String getPriorityLabel() {
-        if (this.priority == null) {
-            return "не задан";
-        }
+        if (this.priority == null) return "Not set";
         return switch (this.priority) {
-            case LOW -> "Низкий";
-            case MEDIUM -> "Средний";
-            case HIGH -> "Высокий";
+            case LOW -> "Low";
+            case MEDIUM -> "Medium";
+            case HIGH -> "High";
         };
     }
 }
