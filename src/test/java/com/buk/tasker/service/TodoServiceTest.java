@@ -119,7 +119,7 @@ class TodoServiceTest {
         when(repository.findByIdAndUser(todoId, testUser)).thenReturn(Optional.empty());
         assertThatThrownBy(() -> todoService.updateTodo(todoId, updatedInput))
                 .isInstanceOf(RuntimeException.class)
-                .hasMessage("Задача не найдена или доступ запрещён");
+                .hasMessage("Todo not found or access denied");
 
         verify(repository, never()).save(any());
     }
@@ -141,7 +141,7 @@ class TodoServiceTest {
         when(repository.existsByIdAndUser(todoId, testUser)).thenReturn(false);
         assertThatThrownBy(() -> todoService.deleteTodo(todoId))
                 .isInstanceOf(RuntimeException.class)
-                .hasMessage("Задача не найдена или доступ запрещён");
+                .hasMessage("Todo not found or access denied");
 
         verify(repository, never()).deleteById(any());
     }

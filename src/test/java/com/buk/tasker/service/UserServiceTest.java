@@ -58,6 +58,6 @@ class UserServiceTest {
         UserService service = new UserService(userRepository);
         assertThatThrownBy(() -> service.getCurrentUser())
                 .isInstanceOf(RuntimeException.class)
-                .hasMessage("Пользователь не найден");
+                .hasMessage("User not found");
     }
 }
