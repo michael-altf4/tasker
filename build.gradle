@@ -4,7 +4,7 @@ plugins {
     id 'java'
 }
 
-group = 'com.buk'
+group = 'io.github.michael_altf4'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
@@ -40,7 +40,7 @@ compileJava {
 }
 
 springBoot {
-    mainClass = 'com.buk.tasker.TaskManagerApplication'
+    mainClass = 'io.github.michael_altf4.tasker.TaskManagerApplication'
     buildInfo()
 }
 
