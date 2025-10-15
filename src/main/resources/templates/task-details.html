@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Задача: <span th:text="${todo.title}"></span></title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .detail-container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      background: #fafafa;
+    }
+    .detail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .detail-title {
+      font-size: 24px;
+      margin: 0 auto;
+      color: #333;
+    }
+    .edit-btn {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: #007bff;
+      margin-left: 10px;
+      padding: 0;
+    }
+    .edit-btn:hover {
+      color: #0056b3;
+    }
+    .detail-created {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+    .detail-description {
+      margin: 15px 0;
+    }
+    .detail-description p {
+      margin: 0 0 10px 0;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      background: #f9f9f9;
+      padding: 12px;
+      border-radius: 4px;
+      border: 1px solid #eee;
+    }
+    .priority-container {
+      margin: 15px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .priority-label {
+      font-weight: bold;
+    }
+    .priority-select {
+      padding: 6px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .btn-close {
+      padding: 10px 16px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-close:hover {
+      background: #c82333;
+    }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #007bff;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    .form-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .comment-container {
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .comment-header {
+      width: 100%;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: #666;
+    }
+    .comment-date,
+    .comment-controls {
+      display: inline-block;
+    }
+    .comment-controls {
+      float: right;
+    }
+    .comment-text {
+      display: block;
+      clear: both;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      line-height: 1.5;
+      word-wrap: break-word;
+      text-align: left;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<script>
+  const currentTodoId = window.location.pathname.split('/').pop();
+
+  const getBaseUrl = () => {
+    const host = window.location.hostname;
+    if (host === 'localhost' || host === '127.0.0.1') {
+      return 'http://localhost:8080';
+    }
+    return 'https://tasker-tlu7.onrender.com';
+  };
+
+  const BASE_API_URL = getBaseUrl();
+  const API_URL = `${BASE_API_URL}/api/tasks`;
+  const COMMENTS_API_URL = `${BASE_API_URL}/api/comments`;
+
+  function showTitleEdit() {
+    document.getElementById('titleText').style.display = 'none';
+    document.getElementById('titleEditForm').style.display = 'block';
+  }
+
+  function hideTitleEdit() {
+    document.getElementById('titleEditForm').style.display = 'none';
+    document.getElementById('titleText').style.display = 'block';
+  }
+
+  function showEditForm() {
+    document.getElementById('editForm').style.display = 'block';
+  }
+
+  function hideEditForm() {
+    document.getElementById('editForm').style.display = 'none';
+  }
+
+  function showPriorityForm() {
+    document.getElementById('priorityForm').style.display = 'flex';
+    document.getElementById('priorityText').style.display = 'none';
+    document.querySelector('.priority-container').style.alignItems = 'flex-start';
+  }
+
+  function hidePriorityForm() {
+    document.getElementById('priorityForm').style.display = 'none';
+    document.getElementById('priorityText').style.display = 'inline';
+    document.querySelector('.priority-container').style.alignItems = 'center';
+  }
+
+  function loadComments() {
+    if (!currentTodoId || isNaN(currentTodoId)) return;
+
+    fetch(`${COMMENTS_API_URL}/task/${currentTodoId}`)
+            .then(response => {
+              if (!response.ok) throw new Error('Ошибка загрузки');
+              return response.json();
+            })
+            .then(comments => {
+              const container = document.getElementById('commentsContainer');
+              container.innerHTML = '';
+
+              comments.forEach(comment => {
+                const div = document.createElement('div');
+                div.className = 'comment-container';
+
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'comment-header';
+
+                const dateSpan = document.createElement('span');
+                dateSpan.className = 'comment-date';
+                dateSpan.textContent = formatDateTime(comment.createdAt);
+
+                const controlsDiv = document.createElement('div');
+                controlsDiv.className = 'comment-controls';
+
+                const editBtn = document.createElement('button');
+                editBtn.textContent = '✏️';
+                editBtn.title = 'Редактировать';
+                editBtn.style.padding = '2px 6px';
+                editBtn.style.fontSize = '12px';
+                editBtn.onclick = () => startEditComment(comment.id, comment.text);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = '🗑️';
+                deleteBtn.title = 'Удалить';
+                deleteBtn.style.padding = '2px 6px';
+                deleteBtn.style.fontSize = '12px';
+                deleteBtn.onclick = () => deleteComment(comment.id);
+
+                controlsDiv.appendChild(editBtn);
+                controlsDiv.appendChild(deleteBtn);
+                headerDiv.appendChild(dateSpan);
+                headerDiv.appendChild(controlsDiv);
+
+                const textDiv = document.createElement('div');
+                textDiv.className = 'comment-text';
+                textDiv.id = `comment-text-${comment.id}`;
+                textDiv.innerHTML = escapeHtml(comment.text).replace(/\n/g, '<br>');
+
+                div.appendChild(headerDiv);
+                div.appendChild(textDiv);
+                container.appendChild(div);
+              });
+            })
+            .catch(err => {
+              console.error('Ошибка загрузки комментариев:', err);
+              document.getElementById('commentsContainer').innerHTML = '<div>Не удалось загрузить комментарии</div>';
+            });
+  }
+
+  function addComment() {
+    const textInput = document.getElementById('newCommentText');
+    const text = textInput.value.trim();
+    if (!text) return;
+
+    fetch(`${COMMENTS_API_URL}/task/${currentTodoId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    })
+            .then(response => {
+              if (!response.ok) throw new Error('Ошибка добавления');
+              return response.json();
+            })
+            .then(newComment => {
+              textInput.value = '';
+              loadComments();
+            })
+            .catch(err => {
+              console.error('Ошибка добавления комментария:', err);
+              alert('Не удалось добавить комментарий');
+            });
+  }
+
+  function startEditComment(id, currentText) {
+    const textSpan = document.getElementById(`comment-text-${id}`);
+    textSpan.innerHTML = '';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = `edit-input-${id}`;
+    input.value = currentText;
+    input.style.width = '100%';
+    input.style.padding = '6px';
+    input.style.marginBottom = '8px';
+    input.style.border = '1px solid #ccc';
+    input.style.borderRadius = '4px';
+
+    const buttonsDiv = document.createElement('div');
+    buttonsDiv.style.display = 'flex';
+    buttonsDiv.style.gap = '8px';
+
+    const saveBtn = document.createElement('button');
+    saveBtn.textContent = 'Сохранить';
+    saveBtn.style.padding = '4px 8px';
+    saveBtn.style.fontSize = '12px';
+    saveBtn.onclick = () => saveComment(id);
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.textContent = 'Отмена';
+    cancelBtn.style.padding = '4px 8px';
+    cancelBtn.style.fontSize = '12px';
+    cancelBtn.style.backgroundColor = '#ddd';
+    cancelBtn.onclick = () => cancelEdit(id, currentText);
+
+    buttonsDiv.appendChild(saveBtn);
+    buttonsDiv.appendChild(cancelBtn);
+
+    textSpan.appendChild(input);
+    textSpan.appendChild(buttonsDiv);
+  }
+
+  function saveComment(id) {
+    const input = document.getElementById(`edit-input-${id}`);
+    const text = input.value.trim();
+    if (!text) {
+      alert('Текст не может быть пустым');
+      return;
+    }
+
+    fetch(`${COMMENTS_API_URL}/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'text/plain' },
+      body: text
+    })
+            .then(response => {
+              if (!response.ok) throw new Error('Ошибка сохранения');
+              return response.json();
+            })
+            .then(() => loadComments())
+            .catch(err => {
+              console.error('Ошибка сохранения комментария:', err);
+              alert('Не удалось сохранить');
+            });
+  }
+
+  function cancelEdit(id, originalText) {
+    const textSpan = document.getElementById(`comment-text-${id}`);
+    textSpan.textContent = originalText;
+  }
+
+  function deleteComment(id) {
+    if (!confirm('Удалить этот комментарий?')) return;
+
+    fetch(`${COMMENTS_API_URL}/${id}`, { method: 'DELETE' })
+            .then(() => loadComments())
+            .catch(err => {
+              console.error('Ошибка удаления комментария:', err);
+              alert('Не удалось удалить');
+            });
+  }
+
+  function formatDateTime(isoString) {
+    const date = new Date(isoString);
+    return new Intl.DateTimeFormat('ru-RU', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  if (currentTodoId && !isNaN(currentTodoId)) {
+    loadComments();
+  } else {
+    document.getElementById('commentsContainer').innerHTML = '<div>Ошибка: задача не найдена</div>';
+  }
+</script>
+<body>
+<div class="detail-container">
+  <a href="/" class="back-link">← Назад к списку</a>
+
+  <div class="detail-header">
+    <h1 class="detail-title" id="titleText" th:text="${todo.title}"></h1>
+    <button class="edit-btn" onclick="showTitleEdit()">✏️</button>
+  </div>
+
+  <div id="titleEditForm" style="display: none; margin-bottom: 20px;">
+    <form th:action="@{/task/{id}/update-title(id=${todo.id})}" method="post">
+      <input type="text" name="title" th:value="${todo.title}" style="width: 100%; padding: 8px; font-size: 16px;" required />
+      <button type="submit" style="margin-top: 8px; padding: 6px 12px;">Сохранить</button>
+      <button type="button" onclick="hideTitleEdit()" style="margin-left: 8px;">Отмена</button>
+    </form>
+  </div>
+
+  <p class="detail-created">
+    Создана: <span th:text="${#temporals.format(todo.createdAt, 'dd.MM.yyyy в HH:mm')}"></span>
+  </p>
+
+  <div class="priority-container" style="display: flex; align-items: center; gap: 10px; margin: 15px 0;" id="priorityContainer">
+    <span class="priority-label">Приоритет:</span>
+
+    <span id="priorityText" style="font-weight: normal;">
+<span th:text="${todo.priorityLabel}"></span>
+    </span>
+
+    <button class="edit-btn" onclick="showPriorityForm()" style="flex-shrink: 0;">✏️</button>
+  </div>
+
+  <div id="priorityForm" style="display: none; margin: 15px 0;">
+    <form th:action="@{/task/{id}/update-priority(id=${todo.id})}" method="post" style="display: flex; align-items: center; gap: 8px;">
+      <select name="priority" class="priority-select">
+        <option th:selected="${todo.priority == 'LOW'}" value="LOW">Низкий</option>
+        <option th:selected="${todo.priority == 'MEDIUM'}" value="MEDIUM">Средний</option>
+        <option th:selected="${todo.priority == 'HIGH'}" value="HIGH">Высокий</option>
+      </select>
+      <button type="submit" style="padding: 6px 10px; font-size: 14px;">✔️</button>
+      <button type="button" onclick="hidePriorityForm()" style="margin-left: 8px;">Отмена</button>
+    </form>
+  </div>
+
+  <div class="detail-description">
+    <div th:if="${todo.description == null or todo.description == ''}">
+      <form th:action="@{/task/{id}/update-description(id=${todo.id})}" method="post">
+            <textarea name="description" rows="5" style="width: 100%; border: 1px solid #ccc; padding: 8px;"
+                      placeholder="Введите описание задачи..."></textarea>
+        <button type="submit" style="margin-top: 10px; padding: 6px 12px;">Сохранить</button>
+      </form>
+    </div>
+
+    <!-- Если описание есть -->
+    <div th:unless="${todo.description == null or todo.description == ''}" style="display: flex; align-items: center; gap: 10px;">
+      <p style="margin: 0; flex: 1; line-height: 1.5; white-space: pre-wrap; background: #f9f9f9; padding: 12px; border-radius: 4px; border: 1px solid #eee;"
+         th:text="${todo.description}" id="descriptionText"></p>
+      <button class="edit-btn" onclick="showEditForm()">✏️</button>
+    </div>
+
+    <div id="editForm" style="display: none; margin-top: 15px;">
+      <form th:action="@{/task/{id}/update-description(id=${todo.id})}" method="post">
+            <textarea name="description" rows="5" style="width: 100%; border: 1px solid #ccc; padding: 8px;"
+                      th:text="${todo.description}"></textarea>
+        <button type="submit" style="margin-top: 10px; padding: 6px 12px;">Сохранить</button>
+        <button type="button" onclick="hideEditForm()" style="margin-left: 8px;">Отмена</button>
+      </form>
+    </div>
+  </div>
+
+  <form th:action="@{/task/{id}/close(id=${todo.id})}" method="post">
+    <button type="submit" class="btn-close" th:unless="${todo.completed}">Закрыть задачу</button>
+  </form>
+  <p th:if="${todo.completed}" style="color: #28a745; font-weight: bold; margin-top: 10px;">✅ Эта задача закрыта</p>
+</div>
+<div style="margin: 30px 0; padding: 15px; border: 1px solid #eee; border-radius: 8px; background: #f9f9f9;">
+  <h3>Комментарии</h3>
+
+  <div style="margin-bottom: 15px;">
+        <textarea id="newCommentText" rows="3" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+                  placeholder="Напишите комментарий..."></textarea>
+    <button onclick="addComment()" style="margin-top: 8px; padding: 6px 12px;">Добавить</button>
+  </div>
+
+  <div id="commentsContainer"></div>
+</div>
+</body>
+</html>

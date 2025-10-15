@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
     const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     const API_URL = isLocalhost
-        ? 'http://localhost:8080/api/todos'
-        : 'https://tasker-tlu7.onrender.com/api/todos';
+        ? 'http://localhost:8080/api/tasks'
+        : 'https://tasker-tlu7.onrender.com/api/tasks';
     let currentTodos = [];
 
     function loadTodos() {
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const titleSpan = document.createElement('span');
             titleSpan.className = 'title';
-            titleSpan.innerHTML = `<a href="/todo/${todo.id}" style="color: inherit; text-decoration: none;">${todo.title}</a>`;
+            titleSpan.innerHTML = `<a href="/task/${todo.id}" style="color: inherit; text-decoration: none;">${todo.title}</a>`;
             if (todo.completed) {
                 titleSpan.classList.add('completed-line');
             }
