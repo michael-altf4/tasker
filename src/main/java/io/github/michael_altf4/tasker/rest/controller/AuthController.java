@@ -1,9 +1,10 @@
-package io.github.michael_altf4.tasker.controller;
+package io.github.michael_altf4.tasker.rest.controller;
 
-import io.github.michael_altf4.tasker.model.User;
-import io.github.michael_altf4.tasker.repository.UserRepository;
+import io.github.michael_altf4.tasker.storage.model.User;
+import io.github.michael_altf4.tasker.storage.repository.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -15,15 +16,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Slf4j
 @Controller
 @Tag(name = "Authentication", description = "User registration and login (Thymeleaf UI)")
+@RequiredArgsConstructor
 public class AuthController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+
 
     @GetMapping("/login")
     @Operation(summary = "Show login form")

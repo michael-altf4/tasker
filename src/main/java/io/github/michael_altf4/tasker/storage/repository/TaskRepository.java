@@ -1,7 +1,7 @@
-package io.github.michael_altf4.tasker.repository;
+package io.github.michael_altf4.tasker.storage.repository;
 
-import io.github.michael_altf4.tasker.model.Task;
-import io.github.michael_altf4.tasker.model.User;
+import io.github.michael_altf4.tasker.storage.model.Task;
+import io.github.michael_altf4.tasker.storage.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

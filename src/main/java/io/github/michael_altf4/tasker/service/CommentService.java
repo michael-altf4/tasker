@@ -1,9 +1,10 @@
 
 package io.github.michael_altf4.tasker.service;
 
-import io.github.michael_altf4.tasker.model.Comment;
-import io.github.michael_altf4.tasker.model.Task;
-import io.github.michael_altf4.tasker.repository.CommentRepository;
+import io.github.michael_altf4.tasker.storage.model.Comment;
+import io.github.michael_altf4.tasker.storage.model.Task;
+import io.github.michael_altf4.tasker.storage.repository.CommentRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -11,13 +12,10 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class CommentService {
 
     private final CommentRepository repository;
-
-    public CommentService(CommentRepository repository) {
-        this.repository = repository;
-    }
 
     public List<Comment> getCommentsByTodoId(Long todoId) {
         log.debug("Fetching comments for task ID={}", todoId);

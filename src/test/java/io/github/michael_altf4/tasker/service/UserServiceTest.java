@@ -1,7 +1,7 @@
 package io.github.michael_altf4.tasker.service;
 
-import io.github.michael_altf4.tasker.model.User;
-import io.github.michael_altf4.tasker.repository.UserRepository;
+import io.github.michael_altf4.tasker.storage.model.User;
+import io.github.michael_altf4.tasker.storage.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

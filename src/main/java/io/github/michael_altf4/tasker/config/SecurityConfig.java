@@ -1,7 +1,7 @@
 package io.github.michael_altf4.tasker.config;
 
-import io.github.michael_altf4.tasker.model.User;
-import io.github.michael_altf4.tasker.repository.UserRepository;
+import io.github.michael_altf4.tasker.storage.model.User;
+import io.github.michael_altf4.tasker.storage.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

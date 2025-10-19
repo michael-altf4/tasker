@@ -1,4 +1,4 @@
-package io.github.michael_altf4.tasker.controller;
+package io.github.michael_altf4.tasker.rest.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

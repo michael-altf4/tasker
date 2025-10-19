@@ -1,8 +1,10 @@
 package io.github.michael_altf4.tasker.service;
 
-import io.github.michael_altf4.tasker.model.Task;
-import io.github.michael_altf4.tasker.model.User;
-import io.github.michael_altf4.tasker.repository.TaskRepository;
+import io.github.michael_altf4.tasker.rest.resource.UpdateTaskResource;
+import io.github.michael_altf4.tasker.storage.model.Task;
+import io.github.michael_altf4.tasker.storage.model.User;
+import io.github.michael_altf4.tasker.storage.repository.TaskRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -11,15 +13,12 @@ import java.util.Optional;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class TaskService {
 
     private final TaskRepository repository;
     private final UserService userService;
 
-    public TaskService(TaskRepository repository, UserService userService) {
-        this.repository = repository;
-        this.userService = userService;
-    }
 
     public List<Task> getAllTasks() {
         User user = userService.getCurrentUser();
@@ -42,20 +41,22 @@ public class TaskService {
         return saved;
     }
 
-    public Task updateTask(Long id, Task updatedTodo) {
+    public Task updateTask(Long id, UpdateTaskResource resource) {
         User user = userService.getCurrentUser();
         return repository.findByIdAndUser(id, user)
                 .map(existing -> {
                     log.info("Updating task ID={} by user: {}", id, user.getUsername());
-                    if (updatedTodo.getTitle() != null) {
-                        existing.setTitle(updatedTodo.getTitle());
+                    if (resource.getTitle() != null && !resource.getTitle().trim().isEmpty()) {
+                        existing.setTitle(resource.getTitle().trim());
                     }
-                    if (updatedTodo.getDescription() != null) {
-                        existing.setDescription(updatedTodo.getDescription());
+                    if (resource.getDescription() != null) {
+                        existing.setDescription(resource.getDescription());
                     }
-                    existing.setCompleted(updatedTodo.isCompleted());
-                    if (updatedTodo.getPriority() != null) {
-                        existing.setPriority(updatedTodo.getPriority());
+                    if (resource.getPriority() != null) {
+                        existing.setPriority(resource.getPriority());
+                    }
+                    if (resource.isCompleted() != null) {
+                        existing.setCompleted(resource.isCompleted());
                     }
                     return repository.save(existing);
                 })

@@ -1,10 +1,11 @@
 package io.github.michael_altf4.tasker.service;
 
 
-import io.github.michael_altf4.tasker.model.Priority;
-import io.github.michael_altf4.tasker.model.Task;
-import io.github.michael_altf4.tasker.model.User;
-import io.github.michael_altf4.tasker.repository.TaskRepository;
+import io.github.michael_altf4.tasker.rest.resource.UpdateTaskResource;
+import io.github.michael_altf4.tasker.storage.model.Priority;
+import io.github.michael_altf4.tasker.storage.model.Task;
+import io.github.michael_altf4.tasker.storage.model.User;
+import io.github.michael_altf4.tasker.storage.repository.TaskRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -92,7 +93,7 @@ class TaskServiceTest {
     @Test
     void shouldUpdateTaskWhenExistsAndBelongsToUser() {
         Long todoId = 1L;
-        Task updatedInput = new Task();
+        UpdateTaskResource updatedInput = new UpdateTaskResource();
         updatedInput.setTitle("Обновлённое название");
         updatedInput.setDescription("Новое описание");
         updatedInput.setCompleted(true);
@@ -100,8 +101,13 @@ class TaskServiceTest {
 
         when(userService.getCurrentUser()).thenReturn(testUser);
         when(repository.findByIdAndUser(todoId, testUser)).thenReturn(Optional.of(sampleTodo));
-        when(repository.save(any(Task.class))).thenReturn(sampleTodo);
+        when(repository.save(any(Task.class))).thenAnswer(invocation -> {
+            Task savedTask = invocation.getArgument(0);
+            return savedTask;
+        });
+
         Task result = taskService.updateTask(todoId, updatedInput);
+
         assertThat(result.getTitle()).isEqualTo("Обновлённое название");
         assertThat(result.getDescription()).isEqualTo("Новое описание");
         assertThat(result.isCompleted()).isTrue();
@@ -112,7 +118,7 @@ class TaskServiceTest {
     @Test
     void shouldThrowExceptionWhenUpdatingNonExistentTask() {
         Long todoId = 999L;
-        Task updatedInput = new Task();
+        UpdateTaskResource updatedInput = new UpdateTaskResource();
         updatedInput.setTitle("Невозможное обновление");
 
         when(userService.getCurrentUser()).thenReturn(testUser);

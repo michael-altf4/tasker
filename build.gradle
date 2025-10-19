@@ -21,6 +21,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-registry-prometheus'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+    implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
 
 
     runtimeOnly 'org.postgresql:postgresql'
@@ -44,7 +45,9 @@ springBoot {
     buildInfo()
 }
 
-
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
 
 tasks.named('test') {
     useJUnitPlatform()
@@ -55,4 +58,10 @@ test {
         events "passed", "skipped", "failed", "standardOut", "standardError"
         exceptionFormat "full"
     }
+
+    systemProperty 'file.encoding', 'UTF-8'
+    systemProperty 'spring.messages.basename', 'org.hibernate.validator.ValidationMessages'
+    systemProperty 'spring.messages.fallback-to-system-locale', 'false'
+    systemProperty 'user.language', 'en'
+    systemProperty 'user.country', 'US'
 }

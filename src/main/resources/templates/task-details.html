@@ -300,9 +300,9 @@
     }
 
     fetch(`${COMMENTS_API_URL}/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'text/plain' },
-      body: text
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: text })
     })
             .then(response => {
               if (!response.ok) throw new Error('Ошибка сохранения');
@@ -364,7 +364,8 @@
   </div>
 
   <div id="titleEditForm" style="display: none; margin-bottom: 20px;">
-    <form th:action="@{/task/{id}/update-title(id=${todo.id})}" method="post">
+    <form th:action="@{/task/{id}(id=${todo.id})}" method="post" th:method="post">
+      <input type="hidden" name="_method" value="PATCH" />
       <input type="text" name="title" th:value="${todo.title}" style="width: 100%; padding: 8px; font-size: 16px;" required />
       <button type="submit" style="margin-top: 8px; padding: 6px 12px;">Сохранить</button>
       <button type="button" onclick="hideTitleEdit()" style="margin-left: 8px;">Отмена</button>
@@ -377,16 +378,15 @@
 
   <div class="priority-container" style="display: flex; align-items: center; gap: 10px; margin: 15px 0;" id="priorityContainer">
     <span class="priority-label">Приоритет:</span>
-
     <span id="priorityText" style="font-weight: normal;">
-<span th:text="${todo.priorityLabel}"></span>
+      <span th:text="${todo.priorityLabel}"></span>
     </span>
-
     <button class="edit-btn" onclick="showPriorityForm()" style="flex-shrink: 0;">✏️</button>
   </div>
 
   <div id="priorityForm" style="display: none; margin: 15px 0;">
-    <form th:action="@{/task/{id}/update-priority(id=${todo.id})}" method="post" style="display: flex; align-items: center; gap: 8px;">
+    <form th:action="@{/task/{id}(id=${todo.id})}" method="post" th:method="post" style="display: flex; align-items: center; gap: 8px;">
+      <input type="hidden" name="_method" value="PATCH" />
       <select name="priority" class="priority-select">
         <option th:selected="${todo.priority == 'LOW'}" value="LOW">Низкий</option>
         <option th:selected="${todo.priority == 'MEDIUM'}" value="MEDIUM">Средний</option>
@@ -399,14 +399,14 @@
 
   <div class="detail-description">
     <div th:if="${todo.description == null or todo.description == ''}">
-      <form th:action="@{/task/{id}/update-description(id=${todo.id})}" method="post">
-            <textarea name="description" rows="5" style="width: 100%; border: 1px solid #ccc; padding: 8px;"
-                      placeholder="Введите описание задачи..."></textarea>
+      <form th:action="@{/task/{id}(id=${todo.id})}" method="post" th:method="post">
+        <input type="hidden" name="_method" value="PATCH" />
+        <textarea name="description" rows="5" style="width: 100%; border: 1px solid #ccc; padding: 8px;"
+                  placeholder="Введите описание задачи..."></textarea>
         <button type="submit" style="margin-top: 10px; padding: 6px 12px;">Сохранить</button>
       </form>
     </div>
 
-    <!-- Если описание есть -->
     <div th:unless="${todo.description == null or todo.description == ''}" style="display: flex; align-items: center; gap: 10px;">
       <p style="margin: 0; flex: 1; line-height: 1.5; white-space: pre-wrap; background: #f9f9f9; padding: 12px; border-radius: 4px; border: 1px solid #eee;"
          th:text="${todo.description}" id="descriptionText"></p>
@@ -414,20 +414,24 @@
     </div>
 
     <div id="editForm" style="display: none; margin-top: 15px;">
-      <form th:action="@{/task/{id}/update-description(id=${todo.id})}" method="post">
-            <textarea name="description" rows="5" style="width: 100%; border: 1px solid #ccc; padding: 8px;"
-                      th:text="${todo.description}"></textarea>
+      <form th:action="@{/task/{id}(id=${todo.id})}" method="post" th:method="post">
+        <input type="hidden" name="_method" value="PATCH" />
+        <textarea name="description" rows="5" style="width: 100%; border: 1px solid #ccc; padding: 8px;"
+                  th:text="${todo.description}"></textarea>
         <button type="submit" style="margin-top: 10px; padding: 6px 12px;">Сохранить</button>
         <button type="button" onclick="hideEditForm()" style="margin-left: 8px;">Отмена</button>
       </form>
     </div>
   </div>
 
-  <form th:action="@{/task/{id}/close(id=${todo.id})}" method="post">
-    <button type="submit" class="btn-close" th:unless="${todo.completed}">Закрыть задачу</button>
+  <form th:action="@{/task/{id}(id=${todo.id})}" method="post" th:method="post" th:unless="${todo.completed}">
+    <input type="hidden" name="_method" value="PATCH" />
+    <input type="hidden" name="completed" value="true" />
+    <button type="submit" class="btn-close">Закрыть задачу</button>
   </form>
   <p th:if="${todo.completed}" style="color: #28a745; font-weight: bold; margin-top: 10px;">✅ Эта задача закрыта</p>
 </div>
+
 <div style="margin: 30px 0; padding: 15px; border: 1px solid #eee; border-radius: 8px; background: #f9f9f9;">
   <h3>Комментарии</h3>
 
