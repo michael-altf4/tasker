@@ -14,8 +14,8 @@ public class UpdateTaskRequestToTaskConverter implements Converter<UpdateTaskRes
         Task task = new Task();
         task.setTitle(request.getTitle());
         task.setDescription(request.getDescription());
-        if (request.isCompleted() != null) {
-            task.setCompleted(request.isCompleted());
+        if (request.getCompleted() != null) {
+            task.setCompleted(request.getCompleted());
         }
         task.setPriority(request.getPriority());
         return task;

@@ -1,12 +1,16 @@
-
 package io.github.michael_altf4.tasker.storage.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.ToString;
+
 import java.time.LocalDateTime;
 
+@Data
 @Entity
+@ToString(exclude = {"task"})
 @Schema(description = "Comment on a todo item")
 public class Comment {
 
@@ -29,18 +33,4 @@ public class Comment {
     public Comment() {
         this.createdAt = LocalDateTime.now();
     }
-
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) { this.id = id; }
-
-    public String getText() { return text; }
-    public void setText(String text) { this.text = text; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-
-    public Task getTodoItem() { return task; }
-    public void setTodoItem(Task task) { this.task = task; }
 }

@@ -55,8 +55,8 @@ public class TaskService {
                     if (resource.getPriority() != null) {
                         existing.setPriority(resource.getPriority());
                     }
-                    if (resource.isCompleted() != null) {
-                        existing.setCompleted(resource.isCompleted());
+                    if (resource.getCompleted() != null) {
+                        existing.setCompleted(resource.getCompleted());
                     }
                     return repository.save(existing);
                 })

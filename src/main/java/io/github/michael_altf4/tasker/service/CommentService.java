@@ -23,7 +23,7 @@ public class CommentService {
     }
 
     public Comment createComment(Comment comment, Task task) {
-        comment.setTodoItem(task);
+        comment.setTask(task);
         Comment saved = repository.save(comment);
         log.info("Created comment ID={} for task ID={}", saved.getId(), task.getId());
         return saved;
