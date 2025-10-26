@@ -32,15 +32,11 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    compileOnly 'org.springframework.boot:spring-boot-starter-tomcat'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 }
 
-compileJava {
-    options.annotationProcessorPath = configurations.annotationProcessor
-}
 
 springBoot {
     mainClass = 'io.github.michael_altf4.tasker.TaskManagerApplication'

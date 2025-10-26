@@ -1,173 +1,176 @@
 
-# NoMoreProcrastination.app - демонстрационный проект 
 
-> **Цель проекта** - показать применение актуальных технологий и практик разработки: от локальной сборки до CI/CD, мониторинга и логирования.  
-> Приложение реализует простой, но полный цикл: **бэкенд + фронтенд + безопасность + тестирование + деплой**.
+# NoMoreProcrastination.app - demo project
+[Русская версия / Russian version - README_RU.md](README_RU.md)
 
-**Демо-версия**: [https://tasker-tlu7.onrender.com/](https://tasker-tlu7.onrender.com/)
-> **Дисклеймер:** проект размещён на **бесплатном тарифе Render**.  
-> При первом запросе после простоя контейнер **запускается ~2–3 минуты**.  
-> Если страница долго не грузится - подождите, это **нормально** для free-tier.
+> **Project goal** - to demonstrate the practical use of modern development technologies and practices: from local build to CI/CD, monitoring, and logging.  
+> The application implements a simple yet complete development cycle: **backend + frontend + security + testing + deployment**.
+
+**Live demo**: [https://tasker-tlu7.onrender.com/](https://tasker-tlu7.onrender.com/)
+> **Disclaimer:** The project is hosted on **Render's free tier**.  
+> After being idle, the container takes **~2–3 minutes to start** on the first request.  
+> If the page loads slowly - please wait; this is **normal behavior** for free-tier hosting.
 
 ---
 
-## Оглавление
+## Table of Contents
 
-- [О проекте](#о-проекте)
-- [Архитектура](#архитектура)
-- [Технологии](#технологии)
-- [Локальный запуск](#локальный-запуск)
+- [About the Project](#about-the-project)
+- [Architecture](#architecture)
+- [Technologies](#technologies)
+- [Local Setup](#local-setup)
 - [CI / CD](#ci--cd)
-- [Мониторинг](#мониторинг)
-- [Логирование](#логирование)
-- [Тестирование](#тестирование)
+- [Monitoring](#monitoring)
+- [Logging](#logging)
+- [Testing](#testing)
+- [API Documentation](#api-documentation)
 
 ---
 
-## О проекте
+## About the Project
 
-**NoMoreProcrastination.app** - это веб-приложение для управления задачами (To-Do List) с поддержкой:
-- Аутентификации пользователей
-- CRUD-операций с задачами
-- Установки приоритета (Низкий / Средний / Высокий)
-- Отметки о выполнении
-- Автоматической даты создания
+**NoMoreProcrastination.app** is a task management web application (To-Do List) featuring:
+- User authentication
+- Full CRUD operations for tasks
+- Priority levels (Low / Medium / High)
+- Completion status tracking
+- Automatic creation timestamp
 
-Приложение состоит из:
-- **Бэкенда** на Spring Boot (REST API)
-- **Фронтенда** на Vanilla JS + Thymeleaf
-- **Базы данных** PostgreSQL (в продакшене) / H2 (в тестах)
-
----
-
-## Архитектура
-
-![architecture.svg](src/main/resources/static/images/architecture.svg)
-
-1. Пользователь взаимодействует с UI (Thymeleaf + JS).
-2. Фронтенд отправляет запросы на `/api/**`.
-3. Spring Boot обрабатывает запросы, проверяет аутентификацию.
-4. Данные сохраняются в PostgreSQL.
+The application consists of:
+- **Backend**: Spring Boot (REST API)
+- **Frontend**: Vanilla JavaScript + Thymeleaf
+- **Database**: PostgreSQL (production) / H2 (testing)
 
 ---
 
-##  Технологии
+## Architecture
 
-| Категория       | Стек                                                                 |
+
+1. User interacts with the UI (Thymeleaf + JS).
+2. Frontend sends requests to `/api/**`.
+3. Spring Boot processes requests and validates authentication.
+4. Data is persisted in PostgreSQL.
+
+---
+
+## Technologies
+
+| Category         | Stack                                                                 |
 |------------------|----------------------------------------------------------------------|
-| **Бэкенд**       | Spring Boot 3, Spring Security, JPA / Hibernate                      |
-| **База данных**  | PostgreSQL (prod), H2 (tests)                                        |
-| **Фронтенд**     | Thymeleaf, Vanilla JavaScript, CSS                                   |
-| **Сборка**       | **Gradle**      |
-| **Контейнер**    | Docker                                                               |
-| **Деплой**       | Render (бесплатный хостинг)                                          |
-| **CI/CD**        | Jenkins (локальный), Render API                                      |
-| **Мониторинг**   | Spring Boot Actuator + Prometheus                                    |
-| **Логирование**  | SLF4J + Logback                                                      |
+| **Backend**      | Spring Boot 3, Spring Security, JPA / Hibernate                      |
+| **Database**     | PostgreSQL (prod), H2 (tests), **Flyway (schema migrations)**        |
+| **Frontend**     | Thymeleaf, Vanilla JavaScript, CSS                                   |
+| **Build Tool**   | **Gradle**                                                           |
+| **Container**    | Docker                                                               |
+| **Deployment**   | Render (free hosting)                                                |
+| **CI/CD**        | Jenkins (local), Render API                                          |
+| **Monitoring**   | Spring Boot Actuator + Prometheus                                    |
+| **Logging**      | SLF4J + Logback                                                      |
+
+> **Flyway** is a database migration tool.  
+> All schema changes (tables, indexes, etc.) are defined in SQL files located in `src/main/resources/db/migration/`.  
+> On startup, Flyway automatically applies migrations in the correct order.
 
 ---
 
-## Локальный запуск
+## Local Setup
 
-1. Убедиться, что установлено:
+1. Ensure you have installed:
     - Java 17+
-    - Gradle (или используйте wrapper)
+    - Gradle (or use the included wrapper)
 
-2. Запустить приложение:
+2. Run the application:
    ```bash
    ./gradlew bootRun
    ```
 
-3. Открыть в браузере   [http://localhost:8080](http://localhost:8080)
+3. Open your browser at [http://localhost:8080](http://localhost:8080)
 
- База данных **H2** создаётся автоматически в памяти.
+To run, you need PostgreSQL, specify the settings in application-local.properties
+Flyway applies migrations from `db/migration/` on startup.
 
 ---
 
 ## CI / CD
 
-Проект поддерживает **полный цикл непрерывной интеграции и доставки**:
+The project supports a **full continuous integration and delivery pipeline**:
 
-### 1. **Jenkins Pipeline** (локальный)
-Развернуть Jenkins можно:
+### 1. **Jenkins Pipeline** (local)
+You can launch Jenkins with:
 ```bash
 docker run -p 8080:8080 -p 50000:50000 jenkins/jenkins:lts
 ```
 
-Pipeline включает этапы:
+The pipeline includes the following stages:
 - **Build**: `./gradlew build -x test`
 - **Test**:
-    - Юнит-тесты (`./gradlew test --tests "*Test"`)
-    - API-тесты (интеграционные, через `TestRestTemplate`)
-    - (в планах) UI-тесты через Selenium
-- **Deploy**: вызов Render API для автоматического деплоя
+    - Unit tests (`./gradlew test --tests "*Test"`)
+    - API tests (integration tests using `TestRestTemplate`)
+    - (planned) UI tests via Selenium
+- **Deploy**: Trigger Render API for automatic deployment
 
-### 2. **Render (продакшен)**
-- Билд собирается из GitHub (main ветка)
-- Деплой - через REST API Render (настраивается в Jenkins)
-
----
-Конечно! Вот обновлённые разделы **«Мониторинг»** и **«Логирование»** с учётом твоих правок:
+### 2. **Render (Production)**
+- Build is triggered from GitHub (main branch)
+- Deployment is performed via Render’s REST API (configured in Jenkins)
 
 ---
 
-## Мониторинг
+## Monitoring
 
-Подключён **Spring Boot Actuator** для диагностики:
+**Spring Boot Actuator** is integrated for diagnostics:
 
-- **Health-check**:  
-    -  Локально: `http://localhost:8081/actuator/health`  
-  -  В продакшене: [`https://tasker-tlu7.onrender.com/actuator/health`](https://tasker-tlu7.onrender.com/actuator/health)  
-  
-  Включает проверку подключения к базе данных (статус `UP`/`DOWN`).
+- **Health-check**:
+    - Locally: `http://localhost:8081/actuator/health`
+    - Production: [`https://tasker-tlu7.onrender.com/actuator/health`](https://tasker-tlu7.onrender.com/actuator/health)  
+      Includes database connectivity status (`UP`/`DOWN`).
 
-- **Метрики в формате Prometheus**:  
-   Локально: `http://localhost:8081/actuator/prometheus`  
-   В продакшене: [`https://tasker-tlu7.onrender.com/actuator/prometheus`](https://tasker-tlu7.onrender.com/actuator/prometheus)
+- **Prometheus-compatible metrics**:
+    - Locally: `http://localhost:8081/actuator/prometheus`
+    - Production: [`https://tasker-tlu7.onrender.com/actuator/prometheus`](https://tasker-tlu7.onrender.com/actuator/prometheus)
 
->  Actuator вынесен на **отдельный порт `8081`** в локальной среде и доступен без аутентификации.  
-> На Render порт объединён с основным (`8080`), но эндпоинты остаются открытыми для мониторинга.
+> Actuator runs on a **dedicated port `8081`** locally and is accessible without authentication.  
+> On Render, it shares the main port (`8080`), but monitoring endpoints remain publicly accessible.
 
 ---
 
-## Логирование
+## Logging
 
-- Используется **SLF4J + Logback** (встроено в Spring Boot).
-- Все логи пишутся:
-    - В **консоль** (`stdout`).
-    - В файл **`logs/app.log`**.
-- В **продакшене** :
-    - Логи доступны через веб-интерфейс Render (вкладка **Logs**).
-    - При локальном запуске в Docker - через команду:
+- **SLF4J + Logback** is used (built into Spring Boot).
+- Logs are written to:
+    - **Console** (`stdout`)
+    - File: **`logs/app.log`**
+- In **production**:
+    - Logs are available via Render’s web interface (**Logs** tab)
+    - When running locally in Docker, view logs with:
       ```bash
       docker logs <container>
       ```
 
 ---
 
-## Тестирование
+## Testing
 
-Проект покрыт тремя уровнями тестов:
+The project includes three testing layers:
 
-| Уровень        | Технология                             | Примеры                                      |
-|----------------|----------------------------------------|----------------------------------------------|
-| **Юнит-тесты** | JUnit 5 + Mockito                      | Логика `TodoService`, валидация              |
-| **API-тесты**  | `@SpringBootTest` + `TestRestTemplate` | Создание/чтение задач через REST API |
-| **UI-тесты**   | Selenium (в планах)                    | Прокликивание сценариев в браузере           |
+| Level            | Technology                             | Examples                                      |
+|------------------|----------------------------------------|----------------------------------------------|
+| **Unit Tests**   | JUnit 5 + Mockito                      | `TodoService` logic, validation              |
+| **API Tests**    | `@SpringBootTest` + `TestRestTemplate` | Task creation/retrieval via REST API         |
+| **UI Tests**     | Selenium (planned)                     | Browser-based user scenario automation       |
 
-Запуск тестов:
+Run all tests:
 ```bash
 ./gradlew test
 ```
 
 ---
 
-## Документация API
+## API Documentation
 
-Проект поддерживает автоматическую генерацию документации через OpenAPI 3.0.
+The project supports auto-generated API documentation via OpenAPI 3.0.
 
-- **Интерактивный интерфейс (Swagger UI)**:  
- [https://tasker-tlu7.onrender.com/swagger-ui.html](https://tasker-tlu7.onrender.com/swagger-ui.html)
+- **Interactive Swagger UI**:  
+  [https://tasker-tlu7.onrender.com/swagger-ui.html](https://tasker-tlu7.onrender.com/swagger-ui.html)
 
-- **Машинно-читаемая OpenAPI-спека (JSON)**:  
- [https://tasker-tlu7.onrender.com/v3/api-docs](https://tasker-tlu7.onrender.com/v3/api-docs)
+- **Machine-readable OpenAPI spec (JSON)**:  
+  [https://tasker-tlu7.onrender.com/v3/api-docs](https://tasker-tlu7.onrender.com/v3/api-docs)
