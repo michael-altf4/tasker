@@ -75,14 +75,14 @@
 
 1. Убедиться, что установлено:
     - Java 17+
-    - Gradle (или используйте wrapper)
+    - Gradle 
 
 2. Запустить приложение:
    ```bash
    ./gradlew bootRun
 3. Открыть в браузере   [http://localhost:8080](http://localhost:8080)
 
- Для запуска нужна PostgreSQL, настройки указать в application-local.properties
+ Для запуска нужна PostgreSQL, настройки указать в application-local.properties.
  Flyway применяет миграции из db/migration/ при старте.
 
 ---
@@ -130,7 +130,7 @@ Pipeline включает этапы:
 
 ## Логирование
 
-- Используется **SLF4J + Logback** (встроено в Spring Boot).
+- Используется SLF4J + Logback.
 - Все логи пишутся:
     - В **консоль** (`stdout`).
     - В файл **`logs/app.log`**.

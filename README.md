@@ -77,7 +77,7 @@ The application consists of:
 
 1. Ensure you have installed:
     - Java 17+
-    - Gradle (or use the included wrapper)
+    - Gradle
 
 2. Run the application:
    ```bash
@@ -86,7 +86,7 @@ The application consists of:
 
 3. Open your browser at [http://localhost:8080](http://localhost:8080)
 
-To run, you need PostgreSQL, specify the settings in application-local.properties
+To run, you need PostgreSQL, specify the settings in application-local.properties.
 Flyway applies migrations from `db/migration/` on startup.
 
 ---
@@ -135,7 +135,7 @@ The pipeline includes the following stages:
 
 ## Logging
 
-- **SLF4J + Logback** is used (built into Spring Boot).
+- SLF4J + Logback is used.
 - Logs are written to:
     - **Console** (`stdout`)
     - File: **`logs/app.log`**
